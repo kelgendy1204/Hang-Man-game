@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import Paper from '@material-ui/core/Paper';
 import Button from '@material-ui/core/Button';
+import randomWords from 'random-words';
 import Grid from '@material-ui/core/Grid';
 import { withStyles  } from '@material-ui/core/styles';
 import Character from './character';
-import './App.css';
+import Image from './image';
+import './app.css';
 
 const styles = theme => ({
     paper: {
@@ -13,28 +15,34 @@ const styles = theme => ({
 });
 
 class App extends Component {
+    state = {
+        hangmanStatus: 0,
+        randomWord: randomWords(
+            {
+                exactly: 1,
+                formatter: word => word.toUpperCase()
+            }
+        )[0]
+    }
+
     render() {
         const { classes } = this.props;
         return (
             <div className="app">
                 <ul className="random-word">
-                    <li>r</li>
-                    <li>a</li>
-                    <li>n</li>
-                    <li>d</li>
-                    <li>o</li>
-                    <li>m</li>
-                    <li>w</li>
-                    <li>o</li>
-                    <li>r</li>
-                    <li>d</li>
+                    {
+                        this.state.randomWord.split('').map((elem, index) => <li key={index}>{elem}</li>)
+                    }
                 </ul>
 
                 <Paper className={classes.paper} elevation={1}>
                     <Grid container spacing={16}>
-                        { 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(elem => <Character data={elem} />) }
+                        { 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((elem, index) => <Character key={index} data={elem} />) }
                     </Grid>
                 </Paper>
+
+                <Image status={this.state.hangmanStatus} />
+
             </div>
         );
     }

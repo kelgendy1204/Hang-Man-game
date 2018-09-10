@@ -5,8 +5,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import red from '@material-ui/core/colors/red';
 import blue from '@material-ui/core/colors/blue';
 import pink from '@material-ui/core/colors/pink';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import App from './app';
 
 const theme = createMuiTheme({
     palette: {
@@ -24,4 +23,3 @@ ReactDOM.render((
         </MuiThemeProvider>
     </Fragment>
 ), document.getElementById('root'));
-registerServiceWorker();
