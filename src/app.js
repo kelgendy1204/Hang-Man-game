@@ -17,12 +17,30 @@ const styles = theme => ({
 class App extends Component {
     state = {
         hangmanStatus: 0,
-        randomWord: randomWords(
+        keyboardCharacters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
+            .map(character => {
+                return {
+                    text: character,
+                    disabled: false
+                };
+            }),
+        randomWordCharacters: randomWords(
             {
                 exactly: 1,
                 formatter: word => word.toUpperCase()
             }
-        )[0]
+        )[0].split('')
+    }
+
+    checkCharacterPresence = elem => {
+        const { randomWordCharacters } = this.state;
+        const { text: characterText } = elem;
+        // this.setState({
+
+        // });
+        // if(randomWordCharacters.includes(characterText)) {
+
+        // }
     }
 
     render() {
@@ -31,13 +49,14 @@ class App extends Component {
             <div className="app">
                 <ul className="random-word">
                     {
-                        this.state.randomWord.split('').map((elem, index) => <li key={index}>{elem}</li>)
+                        this.state.randomWordCharacters.map((elem, index) => <li key={index}>{elem}</li>)
                     }
                 </ul>
 
                 <Paper className={classes.paper} elevation={1}>
                     <Grid container spacing={16}>
-                        { 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map((elem, index) => <Character key={index} data={elem} />) }
+                        { this.state.keyboardCharacters.map((elem, index) =>
+                            <Character checkCharacterPresence={this.checkCharacterPresence} key={index} data={elem} />) }
                     </Grid>
                 </Paper>
 
