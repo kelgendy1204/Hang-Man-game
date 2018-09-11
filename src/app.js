@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import randomWords from 'random-words';
 import Grid from '@material-ui/core/Grid';
 import { withStyles  } from '@material-ui/core/styles';
 import Character from './character';
+import RandomCharacter from './random-character';
 import Image from './image';
 import './app.css';
 
@@ -29,14 +29,18 @@ class App extends Component {
                 exactly   : 1,
                 formatter : word => word.toUpperCase()
             }
-        )[0].split('')
+        )[0].split('').map(elem => {
+            return {
+                character: elem,
+                isHidden: true
+            };
+        })
     }
 
     checkCharacterPresence = elem => {
         const { randomWordCharacters } = this.state;
         const { text: characterText } = elem;
-        console.log(characterText);
-        console.log(randomWordCharacters);
+
         this.setState(prevState => {
             return {
                 keyboardCharacters: prevState.keyboardCharacters.map(elem => {
@@ -50,11 +54,44 @@ class App extends Component {
                 })
             };
         });
-        if(randomWordCharacters.includes(characterText)) {
-            console.log('Found!');
+
+        if(randomWordCharacters.map(elem => elem.character).includes(characterText)) {
+            // Character is found
+            this.setState(prevState => {
+                return {
+                    randomWordCharacters: prevState.randomWordCharacters.map(elem => {
+                        if(elem.character === characterText) {
+                            return {
+                                ...elem,
+                                isHidden: false
+                            };
+                        }
+                        return elem;
+                    })
+                };
+            }, () => {
+                if(this.checkIfFinished()) {
+                    console.log('Finished!');
+                }
+            });
         } else {
-            console.log('Not found!');
+            // Character isn't found
+            if(this.state.hangmanStatus !== 7) {
+                this.setState(prevState => {
+                    return {
+                        hangmanStatus: prevState.hangmanStatus + 1
+                    };
+                });
+            } else {
+                console.log('Failed!');
+            }
         }
+    }
+
+    checkIfFinished = () => {
+        return this.state.randomWordCharacters.reduce((accum, curr) => {
+            return accum && !curr.isHidden;
+        }, true);
     }
 
     render() {
@@ -63,14 +100,16 @@ class App extends Component {
             <div className="app">
                 <ul className="random-word">
                     {
-                        this.state.randomWordCharacters.map((elem, index) => <li key={index}>{elem}</li>)
+                        this.state.randomWordCharacters.map((elem, index) =>
+                            <RandomCharacter data={elem} key={index} />)
                     }
                 </ul>
 
                 <Paper className={classes.paper} elevation={1}>
                     <Grid container spacing={16}>
                         { this.state.keyboardCharacters.map((elem, index) =>
-                            <Character checkCharacterPresence={this.checkCharacterPresence} key={index} data={elem} />) }
+                            <Character
+                                checkCharacterPresence={this.checkCharacterPresence} key={index} data={elem} />) }
                     </Grid>
                 </Paper>
 

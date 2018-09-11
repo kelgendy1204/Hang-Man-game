@@ -12,7 +12,8 @@ class Character extends Component {
     render() {
         const { classes, checkCharacterPresence, data } = this.props;
         return (
-            <Button onClick={() => checkCharacterPresence(data)} className={classes.button} variant="contained" color="primary">
+            <Button disabled={data.disabled} onClick={() => checkCharacterPresence(data)}
+                className={classes.button} variant="contained" color="primary">
                 { data.text }
             </Button>
         );
