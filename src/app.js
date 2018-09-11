@@ -20,14 +20,14 @@ class App extends Component {
         keyboardCharacters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
             .map(character => {
                 return {
-                    text: character,
-                    disabled: false
+                    text     : character,
+                    disabled : false
                 };
             }),
         randomWordCharacters: randomWords(
             {
-                exactly: 1,
-                formatter: word => word.toUpperCase()
+                exactly   : 1,
+                formatter : word => word.toUpperCase()
             }
         )[0].split('')
     }
@@ -35,12 +35,26 @@ class App extends Component {
     checkCharacterPresence = elem => {
         const { randomWordCharacters } = this.state;
         const { text: characterText } = elem;
-        // this.setState({
-
-        // });
-        // if(randomWordCharacters.includes(characterText)) {
-
-        // }
+        console.log(characterText);
+        console.log(randomWordCharacters);
+        this.setState(prevState => {
+            return {
+                keyboardCharacters: prevState.keyboardCharacters.map(elem => {
+                    if(elem.text === characterText) {
+                        return {
+                            ...elem,
+                            disabled: true
+                        };
+                    }
+                    return elem;
+                })
+            };
+        });
+        if(randomWordCharacters.includes(characterText)) {
+            console.log('Found!');
+        } else {
+            console.log('Not found!');
+        }
     }
 
     render() {
