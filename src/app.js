@@ -5,6 +5,7 @@ import Grid from '@material-ui/core/Grid';
 import { withStyles  } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Modal from '@material-ui/core/Modal';
+import Button from '@material-ui/core/Button';
 import Character from './character';
 import RandomCharacter from './random-character';
 import Image from './image';
@@ -14,7 +15,13 @@ const styles = theme => ({
     paper: {
         padding: theme.spacing.unit * 2
     },
+    playAgainBtn: {
+        marginTop: theme.spacing.unit * 2
+    },
     modal: {
+        display: 'flex',
+        alignItems: 'center',
+        flexDirection: 'column',
         position: 'absolute',
         width: theme.spacing.unit * 50,
         backgroundColor: theme.palette.background.paper,
@@ -36,6 +43,7 @@ function getModalStyle() {
 class App extends Component {
     state = {
         hangmanStatus: 0,
+        win: false,
         modalOpen: false,
         keyboardCharacters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
             .map(character => {
@@ -91,7 +99,10 @@ class App extends Component {
                 };
             }, () => {
                 if(this.checkIfFinished()) {
-                    console.log('Finished!');
+                    this.setState({
+                        modalOpen: true,
+                        win: true
+                    });
                 }
             });
         } else {
@@ -103,7 +114,10 @@ class App extends Component {
                     };
                 });
             } else {
-                console.log('Failed!');
+                this.setState({
+                    win: false,
+                    modalOpen: true
+                });
             }
         }
     }
@@ -114,13 +128,31 @@ class App extends Component {
         }, true);
     }
 
-    handleOpen = () => {
-        this.setState({ modalOpen: true  });
-    };
-
-    handleClose = () => {
-        this.setState({ modalOpen: false  });
-    };
+    playAgain = () => {
+        this.setState({
+            hangmanStatus: 0,
+            win: false,
+            modalOpen: false,
+            keyboardCharacters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
+            .map(character => {
+                return {
+                    text     : character,
+                    disabled : false
+                };
+            }),
+            randomWordCharacters: randomWords(
+                {
+                    exactly   : 1,
+                    formatter : word => word.toUpperCase()
+                }
+            )[0].split('').map(elem => {
+                return {
+                    character: elem,
+                    isHidden: true
+                };
+            })
+        });
+    }
 
     render() {
         const { classes } = this.props;
@@ -147,15 +179,16 @@ class App extends Component {
                     aria-labelledby="simple-modal-title"
                     aria-describedby="simple-modal-description"
                     open={this.state.modalOpen}
-                    onClose={this.handleClose}
                 >
                     <div style={getModalStyle()} className={classes.modal}>
-                        <Typography variant="title" id="modal-title">
-                            Text in a modal
+                        <Typography variant="title" color="error" id="modal-title">
+                            {
+                                this.state.win ? 'You win!' : 'You lose!'
+                            }
                         </Typography>
-                        <Typography variant="subheading" id="simple-modal-description">
-                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                        </Typography>
+                        <Button onClick={this.playAgain} variant="contained" color="primary" className={classes.playAgainBtn}>
+                            Play again!
+                        </Button>
                     </div>
                 </Modal>
 
