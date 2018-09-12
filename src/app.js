@@ -3,6 +3,8 @@ import Paper from '@material-ui/core/Paper';
 import randomWords from 'random-words';
 import Grid from '@material-ui/core/Grid';
 import { withStyles  } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import Modal from '@material-ui/core/Modal';
 import Character from './character';
 import RandomCharacter from './random-character';
 import Image from './image';
@@ -11,12 +13,30 @@ import './app.css';
 const styles = theme => ({
     paper: {
         padding: theme.spacing.unit * 2
+    },
+    modal: {
+        position: 'absolute',
+        width: theme.spacing.unit * 50,
+        backgroundColor: theme.palette.background.paper,
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing.unit * 4
     }
 });
+
+function getModalStyle() {
+    const top = 50;
+    const left = 50;
+    return {
+        top: `${top}%`,
+        left: `${left}%`,
+        transform: `translate(-${top}%, -${left}%)`,
+    };
+}
 
 class App extends Component {
     state = {
         hangmanStatus: 0,
+        modalOpen: false,
         keyboardCharacters: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
             .map(character => {
                 return {
@@ -94,6 +114,14 @@ class App extends Component {
         }, true);
     }
 
+    handleOpen = () => {
+        this.setState({ modalOpen: true  });
+    };
+
+    handleClose = () => {
+        this.setState({ modalOpen: false  });
+    };
+
     render() {
         const { classes } = this.props;
         return (
@@ -114,6 +142,22 @@ class App extends Component {
                 </Paper>
 
                 <Image status={this.state.hangmanStatus} />
+
+                <Modal
+                    aria-labelledby="simple-modal-title"
+                    aria-describedby="simple-modal-description"
+                    open={this.state.modalOpen}
+                    onClose={this.handleClose}
+                >
+                    <div style={getModalStyle()} className={classes.modal}>
+                        <Typography variant="title" id="modal-title">
+                            Text in a modal
+                        </Typography>
+                        <Typography variant="subheading" id="simple-modal-description">
+                            Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+                        </Typography>
+                    </div>
+                </Modal>
 
             </div>
         );
